@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>p5.js Example</title>
+    <link rel="icon" href="logoB.png" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Workbench&display=swap" rel="stylesheet">
+    
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: 'Workbench', sans-serif; 
+      }
+
+      #text-container {
+        position: absolute;
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+        font-size: 40px;
+        color: white;
+        letter-spacing: 2px;
+        cursor: pointer; 
+      }
+    </style>
+  </head>
+  <body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script>
+      let particles = [];
+
+      function setup() {
+        createCanvas(windowWidth, windowHeight);
+
+        for (let i = 0; i < 100; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      function draw() {
+        background(0); 
+
+        for (let particle of particles) {
+          particle.update();
+          particle.display();
+        }
+      }
+
+      class Particle {
+        constructor() {
+          this.x = random(width); 
+          this.y = random(height);
+          this.speed = random(1, 4); 
+          this.size = random(1, 5); 
+          this.color = color(random(255), random(255), random(255), 150); 
+        }
+
+        update() {
+          this.x += random(-this.speed, this.speed); 
+          this.y += random(-this.speed, this.speed); 
+
+          if (this.x < 0) this.x = width;
+          if (this.x > width) this.x = 0;
+          if (this.y < 0) this.y = height;
+          if (this.y > height) this.y = 0;
+        }
+
+        display() {
+          noStroke();
+          fill(this.color);
+          ellipse(this.x, this.y, this.size, this.size); 
+        }
+      }
+    </script>
+
+    <div id="text-container">Let's Go</div>
+
+    <script>
+      const textContainer = document.getElementById("text-container");
+
+      textContainer.addEventListener("click", function () {
+        window.location.href = "whole.html";
+      });
+    </script>
+  </body>
+</html>

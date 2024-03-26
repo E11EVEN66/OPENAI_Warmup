@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>p5.js Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative; 
+        }
+
+        canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .logo {
+            position: absolute;
+            bottom: 10px; 
+            right: 10px; 
+            width: 50px; 
+            height: auto; 
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let img1;
+        let img2;
+        let canvasSize = 400;
+        let imgSize;
+        let randomAlpha = 0.7;
+        lastRandomAlpha = randomAlpha;
+        let cropX1, cropY1, cropX2, cropY2;
+
+        function setup() {
+            createCanvas(canvasSize, canvasSize);
+
+            let fileInput1 = createFileInput(handleFile1);
+            fileInput1.position(10, 10);
+
+            let fileInput2 = createFileInput(handleFile2);
+            fileInput2.position(10, 60);
+
+            noLoop();
+
+            randomAlpha = random(0.7, 1.0);
+            cropX1 = cropY1 = cropX2 = cropY2 = 0;
+        }
+
+        function draw() {
+            if (img1 && img2) {
+
+                background(220);
+                let newSize = min(width, height);
+                imgSize = min(img1.width, img1.height, newSize);
+
+                let imgX1 = (width - imgSize) / 2;
+                let imgY1 = (height - imgSize) / 2;
+                let imgX2 = (width - imgSize) / 2;
+                let imgY2 = (height - imgSize) / 2;
+
+                blendMode(MULTIPLY);
+
+                tint(255, 255 * randomAlpha);
+                image(img1, imgX1, imgY1, imgSize, imgSize, cropX1, cropY1, imgSize, imgSize);
+                noTint();
+
+                tint(255, 255 * randomAlpha);
+                image(img2, imgX2, imgY2, imgSize, imgSize, cropX2, cropY2, imgSize, imgSize);
+                noTint();
+
+                blendMode(BLEND);
+            }
+        }
+
+        function handleFile1(file) {
+            if (file.type === 'image') {
+                loadImage(file.data, function (loadedImage) {
+                    let size = min(loadedImage.width, loadedImage.height);
+                    img1 = loadedImage.get(0, 0, size, size);
+
+                    cropX1 = int(random(img1.width - size));
+                    cropY1 = int(random(img1.height - size));
+                    redraw();
+                });
+            } else {
+                alert('Please select a valid image file for the first image!');
+            }
+        }
+
+        function handleFile2(file) {
+            if (file.type === 'image') {
+                loadImage(file.data, function (loadedImage) {
+                    let size = min(loadedImage.width, loadedImage.height);
+                    img2 = loadedImage.get(0, 0, size, size);
+
+                    cropX2 = int(random(img2.width - size));
+                    cropY2 = int(random(img2.height - size));
+                    redraw();
+                });
+            } else {
+                alert('Please select a valid image file for the second image!');
+            }
+        }
+
+        function mousePressed() {
+
+            if (img1 && img2) {
+                randomAlpha = random(0.1, 1.0);
+                while (abs(randomAlpha - lastRandomAlpha) < 0.2) {
+                    randomAlpha = random(0.1, 1.0);
+                }
+                cropX1 = int(random(img1.width - imgSize));
+                cropY1 = int(random(img1.height - imgSize));
+                cropX2 = int(random(img2.width - imgSize));
+                cropY2 = int(random(img2.height - imgSize));
+                redraw();
+            }
+        }
+    </script>
+
+    <img class="logo" src="logoB.png" alt="Logo">
+</body>
+</html>
