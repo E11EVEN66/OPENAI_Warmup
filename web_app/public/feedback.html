@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Assistant</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      text-align: center;
+    }
+    label, input, button, datalist {
+      display: block;
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+    }
+    input[list], input[type="text"] {
+      width: calc(100% - 22px); 
+    }
+    button {
+      background-color: #681cff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #5500ff;
+    }
+    p {
+      color: #888;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Feedback Assistant</h1>
+
+    <label for="projectType">Project Type:</label>
+    <input id="projectType" type="text" placeholder="Project Type" />
+
+    <label for="projectDescription">Project Description:</label>
+    <input id="projectDescription" type="text" placeholder="Project Description" />
+
+    <label for="roleInput">Select Role for Feedback:</label>
+    <input list="roles" id="roleInput" placeholder="Choose or type a role">
+    <datalist id="roles">
+      <option value="Customer">
+      <option value="Art Teacher">
+      <option value="General Audience">
+      <option value="Peer Reviewer">
+    </datalist>
+
+    <button id="send">Generate Feedback</button>
+    <p id="responseText"></p>
+  </div>
+
+  <script>
+    document.getElementById('send').addEventListener('click', async () => {
+      const projectType = document.getElementById('projectType').value.trim();
+      const projectDescription = document.getElementById('projectDescription').value.trim();
+      const role = document.getElementById('roleInput').value.trim();
+
+      if (!projectType || !projectDescription) {
+        responseText.textContent = 'Please fill in all fields.';
+        responseText.style.color = 'red';
+        return;
+      }
+
+      responseText.textContent = 'Generating feedback...';
+      responseText.style.color = 'black';
+
+      try {
+        const response = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectDetails: {
+              description: projectDescription,
+              type: projectType,
+            },
+            role: role
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          responseText.textContent = data.feedback;
+        } else {
+          throw new Error('Failed to fetch');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        responseText.textContent = 'Error generating feedback.';
+        responseText.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
