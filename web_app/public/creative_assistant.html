@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creative Assistant</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+    }
+
+    input, button {
+      width: 100%; 
+      padding: 12px 20px;
+      margin-top: 8px; 
+      box-sizing: border-box; 
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #681cff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #5500ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Creative Project Assistant</h1>
+    <input id="projectType" type="text" placeholder="Project Type" />
+    <input id="projectDescription" type="text" placeholder="Project Description" />
+    <input id="detailedRequirements" type="text" placeholder="Detailed Requirements" />
+    <input id="stylePreference" type="text" placeholder="Style Preference" />
+    <button id="send">Generate Idea</button>
+    <p id="responseText"></p>
+  </div>
+  <script>
+    const sendElement = document.getElementById('send');
+    sendElement.addEventListener('click', async () => {
+      const projectType = document.getElementById('projectType').value;
+      const projectDescription = document.getElementById('projectDescription').value;
+      const detailedRequirements = document.getElementById('detailedRequirements').value;
+      const stylePreference = document.getElementById('stylePreference').value;
+
+      const response = await fetch('/api/creative', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectType,
+          projectDescription,
+          detailedRequirements,
+          stylePreference
+        })
+      });
+
+      const data = await response.json();
+      document.getElementById('responseText').innerText = data.initialIdea;
+    });
+  </script>
+</body>
+</html>

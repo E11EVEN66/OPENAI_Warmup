@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creative Challenge Generator</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f4f4;
+    }
+    .container {
+      width: 600px;
+      text-align: center;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    input, button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 15px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box; 
+    }
+    button {
+      background-color: #681cff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #5500ff;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Random Creative Challenge</h1>
+    <input list="themes" name="theme" id="theme-input" placeholder="Choose or type a theme">
+    <datalist id="themes">
+      <option value="Natural">
+      <option value="Future Tech">
+      <option value="Retro">
+    </datalist>
+    <input list="levels" name="level" id="level-input" placeholder="Choose or type a level">
+    <datalist id="levels">
+      <option value="Beginner">
+      <option value="Intermediate">
+      <option value="Advanced">
+    </datalist>
+    <button id="generate">Generate Challenge</button>
+    <p id="challenge"></p>
+  </div>
+
+  <script>
+    document.getElementById('generate').addEventListener('click', async () => {
+      const theme = document.getElementById('theme-input').value;
+      const level = document.getElementById('level-input').value;
+
+      const response = await fetch('/api/challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ theme, level })
+      });
+
+      const result = await response.json();
+      document.getElementById('challenge').innerText = result.idea ? result.idea : 'Failed to generate challenge';
+    });
+  </script>
+</body>
+</html>

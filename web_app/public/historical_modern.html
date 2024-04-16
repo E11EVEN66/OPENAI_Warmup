@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mix Monster</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 600px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #681cff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #5500ff;
+    }
+    h1 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mix Monster</h1>
+    <input id="elementA" type="text" placeholder="First Element (e.g., Classical Music)" />
+    <input id="elementB" type="text" placeholder="Second Element (e.g., Virtual Reality)" />
+    <input id="elementC" type="text" placeholder="Resulting Concept (optional)" />
+    <select id="operation">
+      <option value="generateC">Generate C (A+B=C)</option>
+      <option value="generateA">Generate A (C-B=A)</option>
+      <option value="generateB">Generate B (C-A=B)</option>
+    </select>
+    <button id="send">Generate</button>
+    <p id="responseText"></p>
+  </div>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sendButton = document.getElementById('send');
+      const responseText = document.getElementById('responseText');
+    
+      sendButton.addEventListener('click', async () => {
+        const elementA = document.getElementById('elementA').value.trim();
+        const elementB = document.getElementById('elementB').value.trim();
+        const elementC = document.getElementById('elementC').value.trim();
+        const operation = document.getElementById('operation').value;
+    
+        let apiUrl = '/api/';
+
+        switch (operation) {
+          case 'generateC':
+            apiUrl += 'generate_c';
+            break;
+          case 'generateA':
+            apiUrl += 'generate_a';
+            break;
+          case 'generateB':
+            apiUrl += 'generate_b';
+            break;
+        }
+    
+        if ((operation === 'generateC' && (!elementA || !elementB)) ||
+            (operation === 'generateA' && (!elementB || !elementC)) ||
+            (operation === 'generateB' && (!elementA || !elementC))) {
+          responseText.textContent = 'Please fill in the necessary fields.';
+          responseText.style.color = 'red';
+          return;
+        }
+    
+        responseText.textContent = 'Generating...';
+        responseText.style.color = 'black';
+    
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ elementA, elementB, elementC })
+          });
+    
+          if (!response.ok) {
+            throw new Error(`Failed to fetch with status: ${response.status}`);
+          }
+          const data = await response.json();
+          responseText.textContent = data.creativeIdea || data.missingElement;
+        } catch (error) {
+          console.error('Error:', error);
+          responseText.textContent = 'Error: ' + error.message;
+          responseText.style.color = 'red';
+        }
+      });
+    });
+    </script>    
+</body>
+</html>
